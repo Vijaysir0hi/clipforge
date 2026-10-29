@@ -1,5 +1,7 @@
 # ClipForge
 
+**Русский** · [English](README.en.md)
+
 <div align="center">
 
 **Публикации и статистика TikTok без лишней суеты**
@@ -148,7 +150,7 @@ $env:QT_QPA_PLATFORM='offscreen'; .venv\Scripts\python tests\shots_clipforge.py
 - `src/core/` — база, куки, статистика, импорт и уникализация видео.
 - `tiktok_uploader/` — изолированный адаптер TikTok и Node-подпись.
 
-Подробнее — [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md), релизный чек-лист — [docs/RELEASE.md](docs/RELEASE.md), сторонние компоненты — [docs/THIRD_PARTY.md](docs/THIRD_PARTY.md).
+Подробнее — [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md), релизный чек-лист — [docs/RELEASE.md](docs/RELEASE.md), сторонние компоненты — [docs/THIRD_PARTY.md](docs/THIRD_PARTY.md). Планы — [ROADMAP.md](ROADMAP.md), правила участия — [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Ограничения
 
