@@ -7,7 +7,7 @@
 Одно видео — на группу аккаунтов. Каждому аккаунту можно собрать свою версию ролика.
 Всё локально: база, куки и настройки лежат рядом с программой.
 
-[![Version](https://img.shields.io/badge/version-1.3.0-d9542b?style=flat-square)](../../releases/latest)
+[![Version](https://img.shields.io/badge/version-1.4.0-d9542b?style=flat-square)](../../releases/latest)
 [![Tests](https://img.shields.io/badge/tests-49%20passed-3ecf8e?style=flat-square)](#проверки)
 [![Windows](https://img.shields.io/badge/platform-Windows-1f6feb?style=flat-square)](#требования)
 [![Python](https://img.shields.io/badge/python-3.10%2B-3776ab?style=flat-square)](https://www.python.org/)
@@ -46,7 +46,7 @@
 
 - Варианты собираются во временную папку `data/variants` и удаляются после прогона.
 - Ошибка кодирования помечает только один аккаунт — очередь продолжается.
-- Нет FFmpeg — кнопка предупредит, а не упадёт; проверка есть в self-test и «Проверить окружение».
+- В релизном архиве FFmpeg уже включён (`ffmpeg\bin\ffmpeg.exe`, GPLv3). Если его нет — кнопка предупредит, а не упадёт; проверка есть в self-test и «Проверить окружение».
 
 ```powershell
 # FFmpeg можно положить рядом с программой
@@ -57,7 +57,7 @@ $env:CLIPFORGE_FFMPEG = "C:\tools\ffmpeg\bin\ffmpeg.exe"
 
 ## Требования
 
-Windows, Python 3.10+, Google Chrome, Node.js. Для уникализации — FFmpeg.
+Windows, Python 3.10+, Google Chrome, Node.js. Для запуска из исходников нужен FFmpeg — в релизном архиве он уже лежит в `ffmpeg\bin\`.
 
 ## Запуск из исходников
 
@@ -89,7 +89,7 @@ cd ..\..
 
 Или через готовый spec: `.venv\Scripts\python -m PyInstaller --noconfirm --clean ClipForge.spec`.
 
-Готовая сборка — `dist\ClipForge\ClipForge.exe` вместе с `_internal`. Рядом создаются `data\`, `CookiesDir\` и `.env`. FFmpeg в архив не входит.
+Готовая сборка — `dist\ClipForge\ClipForge.exe` вместе с `_internal`. Рядом создаются `data\`, `CookiesDir\` и `.env`. В архив релиза входит `ffmpeg\bin\ffmpeg.exe` с лицензией GPLv3 и NOTICE, поэтому уникализация работает сразу после распаковки.
 
 ## Проверки
 

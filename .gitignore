@@ -25,3 +25,7 @@ chrome-signup-profile/
 # ��������� ������
 tests/_shots/
 .pytest_cache/
+
+# локальный бинарь FFmpeg (в релизный архив попадает отдельно)
+ffmpeg/*.exe
+ffmpeg/bin/

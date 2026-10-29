@@ -35,6 +35,18 @@ The supported artifact is a PyInstaller onedir build named `ClipForge`, produced
 
 Keep the signer data and `fake_useragent`/`undetected_chromedriver` collection options from the README. The generated directory must retain `data/`, `CookiesDir/`, `.env`, and `selftest.log` behavior.
 
+## FFmpeg in the release archive
+
+The release ZIP ships `ffmpeg\bin\ffmpeg.exe` plus `ffmpeg\LICENSE.txt` (GPLv3) and `ffmpeg\NOTICE.txt` (version, build configuration, source links). The binary itself is ignored by git (`ffmpeg/bin/`, `ffmpeg/*.exe`), so it is added to the release staging folder explicitly:
+
+```powershell
+copy dist\ClipForge\ClipForge.exe stage\ClipForge\
+copy dist\ClipForge\_internal stage\ClipForge\_internal -Recurse
+copy ffmpeg stage\ClipForge\ffmpeg -Recurse
+```
+
+Verify the bundle without a system FFmpeg by clearing `PATH` and running `ClipForge.exe --selftest`; the log must report the bundled `ffmpeg\bin\ffmpeg.exe`.
+
 ## Before publishing
 
 - Review `git diff --check` and run the complete test suite.

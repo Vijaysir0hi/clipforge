@@ -1,0 +1,23 @@
+FFmpeg bundled with ClipForge
+=============================
+
+Binary:        ffmpeg.exe
+Version:       9.0.2-full_build
+Build:         Gyan Doshi, https://www.gyan.dev/ffmpeg/builds/
+Configuration: --enable-gpl --enable-version3 --enable-static ... (full build)
+License:       GNU General Public License v3 — see LICENSE.txt in this folder
+
+FFmpeg is distributed as a separate executable and is not linked into ClipForge.
+ClipForge calls it as an external process for video randomization.
+
+Corresponding source code
+-------------------------
+FFmpeg 9.0.2:            https://ffmpeg.org/releases/ffmpeg-9.0.2.tar.xz
+Build scripts/packages:  https://www.gyan.dev/ffmpeg/builds/
+
+Written offer: the distributor of this archive provides the corresponding source
+code for the bundled FFmpeg on request, free of charge, for at least three years
+from the date of distribution. Requests can be made through the project page.
+
+FFmpeg copyright (c) 2000-2026 the FFmpeg developers.
+FFmpeg is a trademark of Fabrice Bellard, originator of the FFmpeg project.
