@@ -9,7 +9,7 @@
 
 [![Version](https://img.shields.io/badge/version-1.4.0-d9542b?style=flat-square)](../../releases/latest)
 [![Tests](https://img.shields.io/badge/tests-49%20passed-3ecf8e?style=flat-square)](#проверки)
-[![Windows](https://img.shields.io/badge/platform-Windows-1f6feb?style=flat-square)](#требования)
+[![Windows](https://img.shields.io/badge/platform-Windows-1f6feb?style=flat-square)](#установка-и-запуск)
 [![Python](https://img.shields.io/badge/python-3.10%2B-3776ab?style=flat-square)](https://www.python.org/)
 [![License](https://img.shields.io/badge/license-MIT-6b7280?style=flat-square)](LICENSE)
 
@@ -55,13 +55,39 @@ ffmpeg\bin\ffmpeg.exe
 $env:CLIPFORGE_FFMPEG = "C:\tools\ffmpeg\bin\ffmpeg.exe"
 ```
 
-## Требования
+## Установка и запуск
 
-Windows, Python 3.10+, Google Chrome, Node.js. Для запуска из исходников нужен FFmpeg — в релизном архиве он уже лежит в `ffmpeg\bin\`.
+### Вариант 1. Готовый ClipForge.exe (рекомендуется)
 
-## Запуск из исходников
+Python не нужен. Требуются Windows 10/11 и два бесплатных компонента:
+
+- [Node.js LTS](https://nodejs.org/) — подпись запросов и статистика. При установке оставьте галочку «Add to PATH».
+- [Google Chrome](https://www.google.com/chrome/) — вход в аккаунт через браузер.
+
+**Шаги**
+
+1. Откройте [последний релиз](../../releases/latest) и скачайте `ClipForge-v1.4.0-windows-x64.zip` (~140 МБ).
+2. Распакуйте архив в постоянную папку, например `C:\ClipForge`. Не запускайте из ZIP: рядом с `ClipForge.exe` создаются `data\` и `CookiesDir\`.
+3. Запустите `ClipForge.exe`. Если появится «Windows защитила ваш компьютер» — «Подробнее» → «Выполнить в любом случае» (файл не подписан сертификатом).
+4. Проверьте окружение: «Настройки» → «Проверить окружение». Должны быть в порядке Node.js, Chrome и FFmpeg.
+5. Только для статистики, один раз: откройте PowerShell в папке `_internal\tiktok_uploader\tiktok-signature` и выполните `npx playwright install chromium` (~130 МБ, скачивается единожды).
+
+**Первый запуск**
+
+1. «Аккаунты» → «Добавить аккаунт»: вход через браузер или по кукам (`sessionid`, `tt-target-idc`). Массово — «Импорт списка» строками `логин  sessionid  tt-target-idc`.
+2. Задайте тег — это группа аккаунтов для одной публикации.
+3. «Публикации»: выберите видео, подпись и группу. При желании включите «Разные версии для каждого аккаунта».
+4. Нажмите «Опубликовать». Итог по каждому аккаунту — в журнале и в «Истории публикаций».
+
+**Обновление**: распакуйте новый архив поверх старого, сохранив `data\` и `CookiesDir\` — аккаунты, история и настройки останутся на месте.
+
+### Вариант 2. Из исходников
+
+Нужны Python 3.10+, Node.js и Google Chrome.
 
 ```powershell
+git clone https://github.com/fraches05/clipforge.git
+cd clipforge
 python -m venv .venv
 .venv\Scripts\pip install -r requirements.txt
 cd tiktok_uploader\tiktok-signature
@@ -71,7 +97,19 @@ cd ..\..
 .venv\Scripts\python main.py
 ```
 
-Скопируйте `.env.example` в `.env`, если нужен прокси. Проверка окружения: `.venv\Scripts\python main.py --selftest` — результат в `selftest.log`.
+FFmpeg для запуска из исходников положите в `ffmpeg\bin\ffmpeg.exe` (в релизном архиве он уже есть) или укажите путь в `CLIPFORGE_FFMPEG`. Проверка окружения: `.venv\Scripts\python main.py --selftest` — результат в `selftest.log`.
+
+### Если что-то не работает
+
+| Симптом | Решение |
+| --- | --- |
+| Windows или антивирус ругаются на exe | файл не подписан: «Подробнее» → «Выполнить в любом случае»; при необходимости добавьте папку в исключения |
+| «Node.js не найден в PATH» | установите LTS с nodejs.org и перезапустите ClipForge |
+| Не открывается вход через браузер | обновите Google Chrome — используется установленный браузер |
+| Статистика падает с ошибкой Playwright | выполните `npx playwright install chromium` в `_internal\tiktok_uploader\tiktok-signature` |
+| «Для уникализации нужен FFmpeg» | положите `ffmpeg\bin\ffmpeg.exe` рядом с программой |
+| «Сессия недействительна» | куки протухли — войдите в аккаунт заново |
+| Программа не запускается | распакуйте архив в папку, не запускайте напрямую из ZIP |
 
 ## Сборка exe
 
