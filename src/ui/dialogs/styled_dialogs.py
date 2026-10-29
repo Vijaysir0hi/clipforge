@@ -1,4 +1,5 @@
 from PyQt6.QtWidgets import QMessageBox, QInputDialog
+from src.ui.i18n import t
 
 
 def show_message(parent, title, text, icon=QMessageBox.Icon.Information):

@@ -1,6 +1,7 @@
 from PyQt6.QtWidgets import QHeaderView, QAbstractItemView
 from PyQt6.QtCore import Qt
 from src.ui.components.drag_table import DragSelectTableBase
+from src.ui.i18n import t
 
 COL_ID, COL_NAME, COL_TAG, COL_VIDEOS = range(4)
 
@@ -8,7 +9,7 @@ COL_ID, COL_NAME, COL_TAG, COL_VIDEOS = range(4)
 def create_accounts_table():
     table = DragSelectTableBase()
     table.setColumnCount(4)
-    table.setHorizontalHeaderLabels(["ID", "Имя", "Тег", "Видео"])
+    table.setHorizontalHeaderLabels(["ID", t("Имя"), t("Тег"), t("Видео")])
     table.setColumnHidden(COL_ID, True)
 
     header = table.horizontalHeader()

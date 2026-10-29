@@ -4,6 +4,7 @@ from datetime import datetime
 from pathlib import Path
 from threading import Lock
 from src.core.paths import app_dir
+from src.ui.i18n import t
 
 
 class Database:

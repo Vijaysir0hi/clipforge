@@ -2,6 +2,7 @@ import csv
 import time
 
 from src.core.database import Database
+from src.ui.i18n import t
 
 KEEP_SECONDS = 30 * 24 * 3600
 

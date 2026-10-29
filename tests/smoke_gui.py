@@ -9,6 +9,7 @@ from PyQt6.QtWidgets import QApplication
 app = QApplication(sys.argv)
 
 from src.core.database import Database
+from src.ui.copy import nav_items
 from src.ui.windows.main import MainWindow
 from src.ui.dialogs.import_accounts import ImportAccountsDialog
 
@@ -20,7 +21,7 @@ db.set("upload_delay", 5)
 window = MainWindow()
 assert window.windowTitle() == "ClipForge"
 assert window.pages.currentWidget() is window.overview_page
-assert window.sidebar.ITEMS == ["Обзор", "Публикации", "Аккаунты", "Статистика", "Настройки"]
+assert window.sidebar.ITEMS == nav_items()
 assert window.accounts_page.table.rowCount() >= 0
 window.accounts_page.search.setText("smoke")
 window.show_page(1)

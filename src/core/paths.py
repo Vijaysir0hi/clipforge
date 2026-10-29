@@ -1,5 +1,6 @@
 import sys
 from pathlib import Path
+from src.ui.i18n import t
 
 
 def app_dir() -> Path:

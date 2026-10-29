@@ -2,6 +2,7 @@ import os
 import pickle
 from pathlib import Path
 from src.core.paths import app_dir
+from src.ui.i18n import t
 
 
 class CookieManager:

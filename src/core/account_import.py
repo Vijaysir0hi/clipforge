@@ -7,6 +7,7 @@ sessionid узнаётся по длине и hex-содержимому, dc —
 """
 
 import re
+from src.ui.i18n import t
 
 _SESSION_RE = re.compile(r"^[0-9a-f]{20,}$", re.IGNORECASE)
 _DC_RE = re.compile(r"^(useast\d{0,2}[a-z]?|maliva\d{0,2}|alisg\d{0,2}|euw?\d{0,2}[a-z]?|va\d{0,2}[a-z]?|sg\d{0,2}[a-z]?|jp\d{0,2}[a-z]?)$",

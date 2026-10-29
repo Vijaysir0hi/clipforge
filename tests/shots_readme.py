@@ -26,10 +26,10 @@ def _seed(db):
                       ("reels.daily", "daily"), ("reels.night", "daily"),
                       ("clips.archive", "archive")):
         db.save_account(name, f"tiktok_session-{name}.cookie", tag=tag)
-    db.log_upload("studio.nord", "ok", video_path="launch-reel.mp4", caption="Запуск")
-    db.log_upload("studio.sud", "ok", video_path="launch-reel.mp4", caption="Запуск")
-    db.log_upload("reels.daily", "error", video_path="launch-reel.mp4", error="сессия недействительна")
-    db.log_upload("reels.night", "ok", video_path="launch-reel.mp4", caption="Запуск")
+    db.log_upload("studio.nord", "ok", video_path="launch-reel.mp4", caption="Launch")
+    db.log_upload("studio.sud", "ok", video_path="launch-reel.mp4", caption="Launch")
+    db.log_upload("reels.daily", "error", video_path="launch-reel.mp4", error="session is invalid")
+    db.log_upload("reels.night", "ok", video_path="launch-reel.mp4", caption="Launch")
     db.set("upload_delay", 30)
     db.set("randomize_variants", True)
     db.set("randomize_intensity", "medium")
@@ -44,14 +44,14 @@ def _seed(db):
     for username, (handle, followers, plays) in demo.items():
         data = {"handle": handle, "nickname": handle, "user": {"followers": followers, "following": 120,
                                                                "likes": 4500, "videos": 24},
-                "items": [{"id": "730000000000000001", "desc": "Новый ролик · запуск продукта",
+                "items": [{"id": "730000000000000001", "desc": "New clip · product launch",
                            "createTime": now - 7200, "plays": plays, "likes": plays // 12,
                            "comments": plays // 90, "shares": plays // 60, "saves": plays // 40, "duration": 18}]}
         store.save_snapshot(username, data)
     for username, (handle, followers, plays) in demo.items():
         data = {"handle": handle, "nickname": handle, "user": {"followers": followers + 120, "following": 120,
                                                                "likes": 4500, "videos": 24},
-                "items": [{"id": "730000000000000001", "desc": "Новый ролик · запуск продукта",
+                "items": [{"id": "730000000000000001", "desc": "New clip · product launch",
                            "createTime": now - 7200, "plays": plays + 860, "likes": plays // 12,
                            "comments": plays // 90, "shares": plays // 60, "saves": plays // 40, "duration": 18}]}
         store.save_snapshot(username, data)
@@ -74,17 +74,17 @@ def main():
             handle.truncate(12_000_000)
 
         window = MainWindow(service)
-        window.uploads_page.caption.setPlainText("Запуск нового ролика · #clipforge #studio")
+        window.uploads_page.caption.setPlainText("New clip launch · #clipforge #studio")
         window.uploads_page._use_video(video)
         window.uploads_page.log.setPlainText(
             "[1/3] @studio.nord\n"
-            "    Готовлю уникальную версию\n"
-            "    Вариант: launch-reel-01-studio.nord.mp4 · контраст 1.032 · яркость 0.021 · шум 15 · CRF 25\n"
-            "    Опубликовано\n"
+            "    Building a unique version\n"
+            "    Variant: launch-reel-01-studio.nord.mp4 · contrast 1.032 · brightness 0.021 · noise 15 · CRF 25\n"
+            "    Published\n"
             "[2/3] @reels.daily\n"
-            "    Готовлю уникальную версию\n"
-            "    Вариант: launch-reel-02-reels.daily.mp4 · контраст 0.978 · яркость -0.018 · шум 20 · CRF 27\n"
-            "    Опубликовано"
+            "    Building a unique version\n"
+            "    Variant: launch-reel-02-reels.daily.mp4 · contrast 0.978 · brightness -0.018 · noise 20 · CRF 27\n"
+            "    Published"
         )
         window.resize(WIDTH, HEIGHT)
         window.show()

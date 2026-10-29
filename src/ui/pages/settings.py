@@ -1,4 +1,4 @@
-﻿import os
+import os
 import shutil
 import subprocess
 
@@ -19,6 +19,7 @@ from src.ui.components.common import (
     set_role,
 )
 from src.ui.copy import PRODUCT_NAME, PRODUCT_VERSION
+from src.ui.i18n import t
 
 ENV_PATH = app_dir() / ".env"
 KEY = "TIKTOK_PROXY"
@@ -122,28 +123,28 @@ class SettingsPage(QWidget):
         root = QVBoxLayout(self)
         root.setContentsMargins(48, 40, 48, 36)
         root.setSpacing(0)
-        root.addWidget(PageHeader("Настройки", "Соединение, публикация, папка данных"))
+        root.addWidget(PageHeader(t("Настройки"), t("Соединение, публикация, папка данных")))
         root.addSpacing(28)
 
         column = QVBoxLayout()
         column.setContentsMargins(0, 0, 0, 0)
         column.setSpacing(6)
-        column.addWidget(make_label("Прокси", "caption"))
+        column.addWidget(make_label(t("Прокси"), "caption"))
         self.proxy_input = QLineEdit(read_proxy_from_env())
         self.proxy_input.setPlaceholderText("socks5h://127.0.0.1:1080")
         column.addWidget(self.proxy_input)
         note = make_label(
-            "Применяется к входу, загрузке, статистике и подписи запросов. Оставьте пустым, если включён VPN: "
-            "запросы пойдут напрямую через него.", "caption")
+            t("Применяется к входу, загрузке, статистике и подписи запросов. Оставьте пустым, если включён VPN: "
+            "запросы пойдут напрямую через него."), "caption")
         note.setWordWrap(True)
         column.addWidget(note)
         column.addSpacing(16)
 
         buttons = QHBoxLayout()
         buttons.setSpacing(8)
-        self.btn_save = make_button("Сохранить", "primary")
+        self.btn_save = make_button(t("Сохранить"), "primary")
         self.btn_save.clicked.connect(self._save)
-        self.btn_check = make_button("Проверить IP")
+        self.btn_check = make_button(t("Проверить IP"))
         self.btn_check.clicked.connect(self._check)
         buttons.addWidget(self.btn_save)
         buttons.addWidget(self.btn_check)
@@ -159,21 +160,21 @@ class SettingsPage(QWidget):
         column.addWidget(make_divider())
         column.addSpacing(20)
 
-        column.addWidget(make_label("Публикация", "caption"))
+        column.addWidget(make_label(t("Публикация"), "caption"))
         delay_row = QHBoxLayout()
         delay_row.setSpacing(10)
         self.delay = QSpinBox()
         self.delay.setRange(0, 3600)
-        self.delay.setSuffix(" с")
+        self.delay.setSuffix(t(" с"))
         self.delay.setMaximumWidth(120)
         self.delay.setValue(int(self.db.get(DELAY_KEY, 0) or 0))
         self.delay.valueChanged.connect(self._save_delay)
         delay_row.addWidget(self.delay)
-        delay_hint = make_label("пауза между аккаунтами в одной публикации", "caption")
+        delay_hint = make_label(t("пауза между аккаунтами в одной публикации"), "caption")
         delay_row.addWidget(delay_hint, 1)
         column.addLayout(delay_row)
         note2 = make_label(
-            "Пауза снижает риск ограничений: TikTok не любит, когда с одного IP публикуют десятки роликов подряд.",
+            t("Пауза снижает риск ограничений: TikTok не любит, когда с одного IP публикуют десятки роликов подряд."),
             "caption")
         note2.setWordWrap(True)
         column.addWidget(note2)
@@ -182,12 +183,12 @@ class SettingsPage(QWidget):
         column.addWidget(make_divider())
         column.addSpacing(20)
 
-        column.addWidget(make_label("Обслуживание", "caption"))
+        column.addWidget(make_label(t("Обслуживание"), "caption"))
         service = QHBoxLayout()
         service.setSpacing(8)
-        self.btn_data = make_button("Открыть папку данных")
+        self.btn_data = make_button(t("Открыть папку данных"))
         self.btn_data.clicked.connect(self._open_data_dir)
-        self.btn_diag = make_button("Проверить окружение")
+        self.btn_diag = make_button(t("Проверить окружение"))
         self.btn_diag.clicked.connect(self._diagnostics)
         service.addWidget(self.btn_data)
         service.addWidget(self.btn_diag)
@@ -208,18 +209,18 @@ class SettingsPage(QWidget):
         info_layout = QVBoxLayout(info)
         info_layout.setContentsMargins(20, 18, 20, 20)
         info_layout.setSpacing(10)
-        info_layout.addWidget(make_section("О ПРИЛОЖЕНИИ"))
+        info_layout.addWidget(make_section(t("О ПРИЛОЖЕНИИ")))
         info_layout.addWidget(make_label(f"{PRODUCT_NAME} {PRODUCT_VERSION}"))
         self.info_ffmpeg = make_label("", "caption")
         self.info_ffmpeg.setWordWrap(True)
         info_layout.addWidget(self.info_ffmpeg)
-        data_label = make_label(f"Данные: {app_dir()}", "caption")
+        data_label = make_label(t(f"Данные: {app_dir()}"), "caption")
         data_label.setWordWrap(True)
         info_layout.addWidget(data_label)
         info_layout.addSpacing(4)
         info_layout.addWidget(make_divider())
         info_layout.addSpacing(4)
-        note_info = make_label("Локальное приложение: база, куки и настройки хранятся рядом с программой.",
+        note_info = make_label(t("Локальное приложение: база, куки и настройки хранятся рядом с программой."),
                                "caption")
         note_info.setWordWrap(True)
         info_layout.addWidget(note_info)
@@ -237,7 +238,7 @@ class SettingsPage(QWidget):
         self.proxy_input.setText(os.environ.get(KEY, read_proxy_from_env()))
         self.delay.setValue(int(self.db.get(DELAY_KEY, 0) or 0))
         binary = resolve_ffmpeg()
-        self.info_ffmpeg.setText(f"FFmpeg: {binary}" if binary else "FFmpeg не найден — уникализация недоступна")
+        self.info_ffmpeg.setText(f"FFmpeg: {binary}" if binary else t("FFmpeg не найден — уникализация недоступна"))
         set_role(self.info_ffmpeg, "caption" if binary else "err")
 
     def _save(self):
@@ -266,7 +267,7 @@ class SettingsPage(QWidget):
 
     def _diagnostics(self):
         self.btn_diag.setEnabled(False)
-        self.diag.setText("Проверяю окружение...")
+        self.diag.setText(t("Проверяю окружение..."))
         set_role(self.diag, "caption")
         self.diag_thread = DiagnosticsThread()
         self.diag_thread.result.connect(self._diagnostics_done)

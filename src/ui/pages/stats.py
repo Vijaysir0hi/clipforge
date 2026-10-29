@@ -1,4 +1,4 @@
-﻿import sys
+import sys
 import time
 from datetime import datetime
 
@@ -14,6 +14,7 @@ from src.core.stats_store import StatsStore
 from src.ui.components.common import PageHeader, make_button, make_label, set_role
 from src.ui.dialogs.styled_dialogs import show_info, show_warning
 from src.ui.styles import SUCCESS, DANGER, MUTED
+from src.ui.i18n import t
 
 AUTO_OPTIONS = [("Выкл", 0), ("Каждые 15 минут", 15), ("Каждые 30 минут", 30), ("Каждый час", 60)]
 ALL = "__all__"
@@ -117,12 +118,12 @@ class StatsPage(QWidget):
         root.setSpacing(0)
 
         top = QHBoxLayout()
-        self.header = PageHeader("Статистика", "")
+        self.header = PageHeader(t("Статистика"), "")
         top.addWidget(self.header, 1)
-        self.btn_export = make_button("Экспорт CSV")
+        self.btn_export = make_button(t("Экспорт CSV"))
         self.btn_export.clicked.connect(self._export)
         top.addWidget(self.btn_export, 0, Qt.AlignmentFlag.AlignTop)
-        self.btn_refresh = make_button("Обновить", "primary")
+        self.btn_refresh = make_button(t("Обновить"), "primary")
         self.btn_refresh.clicked.connect(self.refresh_all)
         top.addWidget(self.btn_refresh, 0, Qt.AlignmentFlag.AlignTop)
         root.addLayout(top)
@@ -130,11 +131,11 @@ class StatsPage(QWidget):
 
         cards = QHBoxLayout()
         cards.setSpacing(28)
-        self.card_plays = StatCard("Просмотры")
-        self.card_likes = StatCard("Лайки")
-        self.card_comments = StatCard("Комментарии")
-        self.card_shares = StatCard("Репосты")
-        self.card_followers = StatCard("Подписчики")
+        self.card_plays = StatCard(t("Просмотры"))
+        self.card_likes = StatCard(t("Лайки"))
+        self.card_comments = StatCard(t("Комментарии"))
+        self.card_shares = StatCard(t("Репосты"))
+        self.card_followers = StatCard(t("Подписчики"))
         for card in (self.card_plays, self.card_likes, self.card_comments, self.card_shares, self.card_followers):
             cards.addWidget(card)
         cards.addStretch()
@@ -143,13 +144,13 @@ class StatsPage(QWidget):
 
         controls = QHBoxLayout()
         controls.setSpacing(12)
-        controls.addWidget(make_label("Аккаунт", "caption"))
+        controls.addWidget(make_label(t("Аккаунт"), "caption"))
         self.account_filter = QComboBox()
         self.account_filter.setMinimumWidth(200)
         self.account_filter.currentIndexChanged.connect(self.reload)
         controls.addWidget(self.account_filter)
         controls.addSpacing(16)
-        controls.addWidget(make_label("Автообновление", "caption"))
+        controls.addWidget(make_label(t("Автообновление"), "caption"))
         self.auto = QComboBox()
         for label, _ in AUTO_OPTIONS:
             self.auto.addItem(label)
@@ -202,9 +203,9 @@ class StatsPage(QWidget):
         empty = QWidget()
         empty_layout = QVBoxLayout(empty)
         empty_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        title = make_label("Данных пока нет")
+        title = make_label(t("Данных пока нет"))
         title.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        hint = make_label("Нажмите «Обновить», чтобы загрузить статистику роликов.", "muted")
+        hint = make_label(t("Нажмите «Обновить», чтобы загрузить статистику роликов."), "muted")
         hint.setAlignment(Qt.AlignmentFlag.AlignCenter)
         empty_layout.addWidget(title)
         empty_layout.addWidget(hint)
@@ -216,7 +217,7 @@ class StatsPage(QWidget):
         current = self.account_filter.currentData()
         self.account_filter.blockSignals(True)
         self.account_filter.clear()
-        self.account_filter.addItem("Все аккаунты", ALL)
+        self.account_filter.addItem(t("Все аккаунты"), ALL)
         for name in accounts:
             self.account_filter.addItem(name, name)
         index = self.account_filter.findData(current) if current else 0
@@ -295,7 +296,7 @@ class StatsPage(QWidget):
 
         last = self.store.last_fetch()
         self.header.set_subtitle(
-            f"Обновлено {datetime.fromtimestamp(last).strftime('%d.%m в %H:%M')}" if last else "Ещё не обновлялось")
+            t(f"Обновлено {datetime.fromtimestamp(last).strftime('%d.%m в %H:%M')}") if last else t("Ещё не обновлялось"))
         errors = "; ".join(f"{name}: {msg}" for name, msg in self.errors.items())
         self.note.setText(errors)
         set_role(self.note, "err" if errors else "caption")
@@ -364,9 +365,9 @@ class StatsPage(QWidget):
         try:
             count = self.store.export_csv(path, None if selected == ALL else selected)
         except OSError as e:
-            show_warning(self, "Не удалось сохранить", str(e))
+            show_warning(self, t("Не удалось сохранить"), str(e))
             return
-        show_info(self, "Экспорт готов", f"Строк в файле: {count}.\n{path}")
+        show_info(self, t("Экспорт готов"), t(f"Строк в файле: {count}.\n{path}"))
 
     def _video_url(self, row):
         data = self.table.item(row, COL_ACCOUNT).data(Qt.ItemDataRole.UserRole)

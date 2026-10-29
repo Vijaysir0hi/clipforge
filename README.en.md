@@ -9,7 +9,7 @@
 One video — to a group of accounts. Each account can get its own variant of the clip.
 Everything is local: the database, cookies and settings live next to the app.
 
-[![Version](https://img.shields.io/badge/version-1.4.0-d9542b?style=flat-square)](../../releases/latest)
+[![Version](https://img.shields.io/badge/version-1.5.0-d9542b?style=flat-square)](../../releases/latest)
 [![Tests](https://img.shields.io/badge/tests-49%20passed-3ecf8e?style=flat-square)](#checks)
 [![Windows](https://img.shields.io/badge/platform-Windows-1f6feb?style=flat-square)](#installation-and-launch)
 [![Python](https://img.shields.io/badge/python-3.10%2B-3776ab?style=flat-square)](https://www.python.org/)

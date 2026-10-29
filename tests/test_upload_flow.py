@@ -1,6 +1,7 @@
 import os
 import sys
 import tempfile
+from src.ui.i18n import t
 
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -96,9 +97,9 @@ def test_history_dialog_uses_service_and_clears_through_it(qapp):
         service = ClipForgeService(db)
         db.log_upload("one", "error", video_path="clip.mp4", error="bad")
         dialog = UploadHistoryDialog(service=service)
-        assert dialog.windowTitle() == "ClipForge · История публикаций"
+        assert dialog.windowTitle() == t("ClipForge · История публикаций")
         assert dialog.table.rowCount() == 1
-        assert dialog.table.item(0, 3).text() == "ошибка"
+        assert dialog.table.item(0, 3).text() == t("ошибка")
         service.clear_upload_history()
         dialog.reload()
         assert dialog.table.rowCount() == 0

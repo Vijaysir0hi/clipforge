@@ -7,6 +7,7 @@ from PyQt6.QtCore import Qt
 from src.app.services import ClipForgeService
 from src.ui.components.common import make_button, make_label, set_role
 from src.ui.dialogs.styled_dialogs import show_question
+from src.ui.i18n import t
 
 COLUMNS = ["Время", "Аккаунт", "Видео", "Итог", "Причина"]
 
@@ -19,7 +20,7 @@ class UploadHistoryDialog(QDialog):
         self.service = service or (ClipForgeService(db) if db is not None else ClipForgeService())
         self.db = self.service.db
         self.limit = limit
-        self.setWindowTitle("ClipForge · История публикаций")
+        self.setWindowTitle(t("ClipForge · История публикаций"))
         self.setMinimumSize(760, 460)
         self._build()
         self.reload()
@@ -29,7 +30,7 @@ class UploadHistoryDialog(QDialog):
         root.setContentsMargins(24, 22, 24, 20)
         root.setSpacing(12)
 
-        self.title = QLabel("История публикаций")
+        self.title = QLabel(t("История публикаций"))
         self.title.setObjectName("pageTitle")
         root.addWidget(self.title)
 
@@ -53,9 +54,9 @@ class UploadHistoryDialog(QDialog):
 
         actions = QHBoxLayout()
         actions.setSpacing(8)
-        self.btn_clear = make_button("Очистить историю")
+        self.btn_clear = make_button(t("Очистить историю"))
         self.btn_clear.clicked.connect(self._clear)
-        self.btn_close = make_button("Закрыть", "primary")
+        self.btn_close = make_button(t("Закрыть"), "primary")
         self.btn_close.clicked.connect(self.accept)
         actions.addWidget(self.btn_clear)
         actions.addStretch()
@@ -80,8 +81,8 @@ class UploadHistoryDialog(QDialog):
                 (created_at or "")[:19].replace("T", " "),
                 "@" + (username or "") if username else "",
                 os.path.basename(video_path) if video_path else "",
-                "опубликовано" if ok else "ошибка",
-                "" if ok else (error or "неизвестная причина"),
+                t("опубликовано") if ok else t("ошибка"),
+                "" if ok else (error or t("неизвестная причина")),
             ]
             for column, text in enumerate(values):
                 item = QTableWidgetItem(text)
@@ -92,15 +93,15 @@ class UploadHistoryDialog(QDialog):
                 self.table.setItem(index, column, item)
 
         if rows:
-            self.hint.setText(f"Последние записи: {len(rows)} · успешно {ok_count} · с ошибкой {len(rows) - ok_count}")
+            self.hint.setText(t(f"Последние записи: {len(rows)} · успешно {ok_count} · с ошибкой {len(rows) - ok_count}"))
             set_role(self.hint, "muted")
         else:
-            self.hint.setText("Пока ничего не публиковалось")
+            self.hint.setText(t("Пока ничего не публиковалось"))
             set_role(self.hint, "muted")
         self.btn_clear.setEnabled(bool(rows))
 
     def _clear(self):
-        if not show_question(self, "Очистить историю", "Удалить все записи журнала публикаций?"):
+        if not show_question(self, t("Очистить историю"), t("Удалить все записи журнала публикаций?")):
             return
         self.service.clear_upload_history()
         self.reload()

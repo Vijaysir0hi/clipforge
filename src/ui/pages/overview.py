@@ -11,6 +11,7 @@ from src.ui.components.common import (
     make_section,
     set_role,
 )
+from src.ui.i18n import t
 
 
 class OverviewPage(QWidget):
@@ -25,9 +26,9 @@ class OverviewPage(QWidget):
 
         hero = QHBoxLayout()
         hero.setSpacing(16)
-        self.header = PageHeader("Обзор", "Состояние публикаций и аккаунтов ClipForge", eyebrow="ПАНЕЛЬ УПРАВЛЕНИЯ")
+        self.header = PageHeader(t("Обзор"), t("Состояние публикаций и аккаунтов ClipForge"), eyebrow=t("ПАНЕЛЬ УПРАВЛЕНИЯ"))
         hero.addWidget(self.header, 1)
-        self.btn_new = make_button("Новая публикация", "primary")
+        self.btn_new = make_button(t("Новая публикация"), "primary")
         self.btn_new.clicked.connect(self.go_upload.emit)
         hero.addWidget(self.btn_new, 0, Qt.AlignmentFlag.AlignBottom)
         root.addLayout(hero)
@@ -54,7 +55,7 @@ class OverviewPage(QWidget):
         recent_layout = QVBoxLayout(recent)
         recent_layout.setContentsMargins(24, 20, 24, 22)
         recent_layout.setSpacing(0)
-        recent_layout.addWidget(make_section("ПОСЛЕДНИЕ ПУБЛИКАЦИИ"))
+        recent_layout.addWidget(make_section(t("ПОСЛЕДНИЕ ПУБЛИКАЦИИ")))
         recent_layout.addSpacing(12)
         self.recent_layout = QVBoxLayout()
         self.recent_layout.setSpacing(0)
@@ -66,7 +67,7 @@ class OverviewPage(QWidget):
         start_layout = QVBoxLayout(start)
         start_layout.setContentsMargins(24, 20, 24, 22)
         start_layout.setSpacing(0)
-        start_layout.addWidget(make_section("БЫСТРЫЙ СТАРТ"))
+        start_layout.addWidget(make_section(t("БЫСТРЫЙ СТАРТ")))
         start_layout.addSpacing(14)
         for number, title, note in (
             ("01", "Добавьте аккаунт", "Вход через браузер или импорт списка"),
@@ -128,13 +129,13 @@ class OverviewPage(QWidget):
         layout.setContentsMargins(0, 11, 0, 11)
         layout.setSpacing(12)
 
-        name = make_label(f"@{outcome.username}" if outcome.username else "аккаунт")
+        name = make_label(f"@{outcome.username}" if outcome.username else t("аккаунт"))
         layout.addWidget(name)
         layout.addStretch()
 
         moment = (outcome.created_at or "")[:16].replace("T", " ")
         layout.addWidget(make_label(moment, "caption"))
-        status = make_label("опубликовано", "ok") if outcome.status == "ok" else make_label("ошибка", "err")
+        status = make_label(t("опубликовано"), "ok") if outcome.status == "ok" else make_label(t("ошибка"), "err")
         layout.addWidget(status)
         return row
 
@@ -150,10 +151,10 @@ class OverviewPage(QWidget):
         self.error_value.setText(str(errors))
         set_role(self.error_value, "err" if errors else "")
 
-        self.account_hint.setText("АККАУНТЫ" if account_count else "АККАУНТОВ ПОКА НЕТ")
-        self.group_hint.setText("ГРУППЫ")
-        self.history_hint.setText("ПУБЛИКАЦИИ")
-        self.error_hint.setText("ОШИБКИ" if errors else "ОШИБОК НЕТ")
+        self.account_hint.setText(t("АККАУНТЫ") if account_count else t("АККАУНТОВ ПОКА НЕТ"))
+        self.group_hint.setText(t("ГРУППЫ"))
+        self.history_hint.setText(t("ПУБЛИКАЦИИ"))
+        self.error_hint.setText(t("ОШИБКИ") if errors else t("ОШИБОК НЕТ"))
 
         self._clear_recent()
         for index, outcome in enumerate(self.service.recent_uploads(5)):
@@ -161,12 +162,12 @@ class OverviewPage(QWidget):
                 self.recent_layout.addWidget(make_divider())
             self.recent_layout.addWidget(self._recent_row(outcome))
         if not self.recent_layout.count():
-            empty = make_label("Пока нет публикаций — начните с кнопки справа сверху.", "muted")
+            empty = make_label(t("Пока нет публикаций — начните с кнопки справа сверху."), "muted")
             empty.setWordWrap(True)
             self.recent_layout.addWidget(empty)
 
         self.header.set_subtitle(
-            "ClipForge готов к работе. Отправьте видео и следите за результатом."
-            if account_count else "Добавьте аккаунты, выберите группу и начните первую публикацию."
+            t("ClipForge готов к работе. Отправьте видео и следите за результатом.")
+            if account_count else t("Добавьте аккаунты, выберите группу и начните первую публикацию.")
         )
         self.btn_new.setEnabled(bool(account_count))

@@ -3,6 +3,7 @@ from PyQt6.QtWidgets import QDialog, QVBoxLayout, QHBoxLayout, QLineEdit, QPlain
 from src.core.account_import import parse_accounts
 from src.ui.components.common import make_button, make_label
 from src.ui.dialogs.styled_dialogs import show_warning
+from src.ui.i18n import t
 
 
 class ImportAccountsDialog(QDialog):
@@ -10,7 +11,7 @@ class ImportAccountsDialog(QDialog):
 
     def __init__(self, parent=None, tags=None):
         super().__init__(parent)
-        self.setWindowTitle("Импорт аккаунтов")
+        self.setWindowTitle(t("Импорт аккаунтов"))
         self.setMinimumWidth(560)
         self.accounts = []
         self.tag = ""
@@ -19,15 +20,15 @@ class ImportAccountsDialog(QDialog):
         layout.setContentsMargins(28, 24, 28, 24)
         layout.setSpacing(6)
 
-        title = make_label("Импорт аккаунтов")
+        title = make_label(t("Импорт аккаунтов"))
         title.setObjectName("pageTitle")
         layout.addWidget(title)
         layout.addSpacing(8)
 
         hint = make_label(
-            "По одной строке на аккаунт: логин, sessionid, tt-target-idc. Разделители — табуляция, "
+            t("По одной строке на аккаунт: логин, sessionid, tt-target-idc. Разделители — табуляция, "
             "запятая, точка с запятой или пробел. Порядок полей любой, логин можно с @. "
-            "Строки, скопированные из Excel или таблицы, подходят как есть.", "caption")
+            "Строки, скопированные из Excel или таблицы, подходят как есть."), "caption")
         hint.setWordWrap(True)
         layout.addWidget(hint)
         layout.addSpacing(10)
@@ -40,12 +41,12 @@ class ImportAccountsDialog(QDialog):
         layout.addWidget(self.text)
         layout.addSpacing(10)
 
-        layout.addWidget(make_label("Тег для всех", "caption"))
+        layout.addWidget(make_label(t("Тег для всех"), "caption"))
         self.tag_input = QLineEdit()
-        self.tag_input.setPlaceholderText("группа для загрузки")
+        self.tag_input.setPlaceholderText(t("группа для загрузки"))
         layout.addWidget(self.tag_input)
         if tags:
-            layout.addWidget(make_label("Существующие теги: " + ", ".join(tags), "caption"))
+            layout.addWidget(make_label(t("Существующие теги: ") + ", ".join(tags), "caption"))
 
         self.count = make_label("", "caption")
         self.count.setWordWrap(True)
@@ -56,9 +57,9 @@ class ImportAccountsDialog(QDialog):
         buttons = QHBoxLayout()
         buttons.setSpacing(8)
         buttons.addStretch()
-        cancel = make_button("Отмена")
+        cancel = make_button(t("Отмена"))
         cancel.clicked.connect(self.reject)
-        self.ok = make_button("Добавить", "primary")
+        self.ok = make_button(t("Добавить"), "primary")
         self.ok.clicked.connect(self.accept_action)
         self.ok.setDefault(True)
         buttons.addWidget(cancel)
@@ -80,10 +81,10 @@ class ImportAccountsDialog(QDialog):
         accounts, _ = parse_accounts(self.text.toPlainText())
         tag = self.tag_input.text().strip()
         if not accounts:
-            show_warning(self, "Нет данных", "Вставьте хотя бы одну строку с sessionid.")
+            show_warning(self, t("Нет данных"), t("Вставьте хотя бы одну строку с sessionid."))
             return
         if not tag:
-            show_warning(self, "Нет тега", "Укажите тег: по нему аккаунты выбираются при загрузке.")
+            show_warning(self, t("Нет тега"), t("Укажите тег: по нему аккаунты выбираются при загрузке."))
             return
         self.accounts = accounts
         self.tag = tag

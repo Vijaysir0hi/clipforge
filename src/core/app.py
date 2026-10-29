@@ -6,6 +6,7 @@ from src.ui.windows.main import MainWindow
 from src.ui.styles import APP_STYLE
 from src.core.database import Database
 from src.app.services import ClipForgeService
+from src.ui.i18n import t
 
 
 class Application:

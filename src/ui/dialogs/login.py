@@ -6,6 +6,7 @@ from PyQt6.QtCore import QThread, pyqtSignal
 from PyQt6.QtWidgets import QDialog, QHBoxLayout, QProgressBar, QVBoxLayout
 
 from src.ui.components.common import make_button, make_label
+from src.ui.i18n import t
 
 REQUIRED = ("sessionid", "tt-target-idc")
 TIMEOUT_SECONDS = 300
@@ -108,7 +109,7 @@ class LoginDialog(QDialog):
 
     def __init__(self, parent, username):
         super().__init__(parent)
-        self.setWindowTitle("Вход в TikTok")
+        self.setWindowTitle(t("Вход в TikTok"))
         self.setMinimumWidth(460)
         self.setModal(True)
         self.cookies = None
@@ -119,13 +120,13 @@ class LoginDialog(QDialog):
         layout.setContentsMargins(28, 24, 28, 24)
         layout.setSpacing(10)
 
-        title = make_label(f"Вход в «{username}»")
+        title = make_label(t(f"Вход в «{username}»"))
         title.setObjectName("pageTitle")
         layout.addWidget(title)
 
         note = make_label(
-            "Откроется браузер. Войдите в TikTok под нужным аккаунтом — окно закроется само, "
-            "а куки сохранятся в программе.", "caption")
+            t("Откроется браузер. Войдите в TikTok под нужным аккаунтом — окно закроется само, "
+            "а куки сохранятся в программе."), "caption")
         note.setWordWrap(True)
         layout.addWidget(note)
 
@@ -134,12 +135,12 @@ class LoginDialog(QDialog):
         self.progress.setTextVisible(False)
         layout.addWidget(self.progress)
 
-        self.status = make_label("Ожидаю вход...", "muted")
+        self.status = make_label(t("Ожидаю вход..."), "muted")
         layout.addWidget(self.status)
 
         buttons = QHBoxLayout()
         buttons.addStretch()
-        self.btn_cancel = make_button("Отмена")
+        self.btn_cancel = make_button(t("Отмена"))
         self.btn_cancel.clicked.connect(self._cancel)
         buttons.addWidget(self.btn_cancel)
         layout.addLayout(buttons)
@@ -159,7 +160,7 @@ class LoginDialog(QDialog):
     def _cancel(self):
         self.cancelled_by_user = True
         self.thread.stop_requested = True
-        self.status.setText("Отменяю...")
+        self.status.setText(t("Отменяю..."))
         self.btn_cancel.setEnabled(False)
 
     def _succeeded(self, cookies):
@@ -172,7 +173,7 @@ class LoginDialog(QDialog):
         self.reject()
 
     def _cancelled(self):
-        self.status.setText("Вход отменён")
+        self.status.setText(t("Вход отменён"))
         self.reject()
 
     def closeEvent(self, event):

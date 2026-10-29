@@ -1,4 +1,4 @@
-﻿import pickle
+import pickle
 
 from PyQt6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QTableWidgetItem, QMenu, QLineEdit,
                              QComboBox, QStackedLayout)
@@ -14,6 +14,7 @@ from src.ui.dialogs.add_account import AddAccountDialog
 from src.ui.dialogs.import_accounts import ImportAccountsDialog
 from src.ui.dialogs.login import LoginDialog
 from src.ui.dialogs.styled_dialogs import show_info, show_warning, show_error, show_question, get_text
+from src.ui.i18n import t
 
 PROJECT_DIR = app_dir()
 ALL_TAGS = "__all__"
@@ -37,23 +38,23 @@ class AccountsPage(QWidget):
         root.setSpacing(24)
 
         top = QHBoxLayout()
-        self.header = PageHeader("Аккаунты")
+        self.header = PageHeader(t("Аккаунты"))
         top.addWidget(self.header, 1)
-        self.btn_upload = make_button("Загрузить видео", "primary")
+        self.btn_upload = make_button(t("Загрузить видео"), "primary")
         self.btn_upload.clicked.connect(self.go_upload.emit)
         top.addWidget(self.btn_upload, 0, Qt.AlignmentFlag.AlignTop)
         root.addLayout(top)
 
         toolbar = QHBoxLayout()
         toolbar.setSpacing(8)
-        self.btn_add = make_button("Добавить аккаунт")
+        self.btn_add = make_button(t("Добавить аккаунт"))
         self.btn_add.clicked.connect(self._add_account)
-        self.btn_import = make_button("Импорт списка")
-        self.btn_import.setToolTip("Добавить сразу много аккаунтов: логин, sessionid, tt-target-idc")
+        self.btn_import = make_button(t("Импорт списка"))
+        self.btn_import.setToolTip(t("Добавить сразу много аккаунтов: логин, sessionid, tt-target-idc"))
         self.btn_import.clicked.connect(self._import_accounts)
-        self.btn_tag = make_button("Изменить тег")
+        self.btn_tag = make_button(t("Изменить тег"))
         self.btn_tag.clicked.connect(self._set_tag)
-        self.btn_delete = make_button("Удалить", "danger")
+        self.btn_delete = make_button(t("Удалить"), "danger")
         self.btn_delete.clicked.connect(self._delete_selected)
         for btn in (self.btn_add, self.btn_import, self.btn_tag, self.btn_delete):
             toolbar.addWidget(btn)
@@ -63,7 +64,7 @@ class AccountsPage(QWidget):
         filters = QHBoxLayout()
         filters.setSpacing(8)
         self.search = QLineEdit()
-        self.search.setPlaceholderText("Поиск по аккаунту")
+        self.search.setPlaceholderText(t("Поиск по аккаунту"))
         self.search.setClearButtonEnabled(True)
         self.search.setMaximumWidth(260)
         self.search.textChanged.connect(self._apply_filter)
@@ -89,9 +90,9 @@ class AccountsPage(QWidget):
         empty_layout = QVBoxLayout(empty)
         empty_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
         empty_layout.setSpacing(6)
-        self.empty_title = make_label("Аккаунтов пока нет")
+        self.empty_title = make_label(t("Аккаунтов пока нет"))
         self.empty_title.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.empty_note = make_label("Добавьте первый: вход через браузер или по кукам.", "muted")
+        self.empty_note = make_label(t("Добавьте первый: вход через браузер или по кукам."), "muted")
         self.empty_note.setAlignment(Qt.AlignmentFlag.AlignCenter)
         empty_layout.addWidget(self.empty_title)
         empty_layout.addWidget(self.empty_note)
@@ -107,7 +108,7 @@ class AccountsPage(QWidget):
         current = self.tag_filter.currentData()
         self.tag_filter.blockSignals(True)
         self.tag_filter.clear()
-        self.tag_filter.addItem("Все теги", ALL_TAGS)
+        self.tag_filter.addItem(t("Все теги"), ALL_TAGS)
         for tag in self.db.get_account_tags():
             self.tag_filter.addItem(tag, tag)
         index = self.tag_filter.findData(current) if current else 0
@@ -145,19 +146,19 @@ class AccountsPage(QWidget):
 
         total = len(self._accounts)
         if not total:
-            self.empty_title.setText("Аккаунтов пока нет")
-            self.empty_note.setText("Добавьте первый: вход через браузер или по кукам.")
+            self.empty_title.setText(t("Аккаунтов пока нет"))
+            self.empty_note.setText(t("Добавьте первый: вход через браузер или по кукам."))
         else:
-            self.empty_title.setText("Ничего не найдено")
-            self.empty_note.setText("Измените запрос или выберите другой тег.")
+            self.empty_title.setText(t("Ничего не найдено"))
+            self.empty_note.setText(t("Измените запрос или выберите другой тег."))
         self.stack.setCurrentIndex(0 if accounts else 1)
 
         if total:
             subtitle = plural(total, "аккаунт", "аккаунта", "аккаунтов")
             if len(accounts) != total:
-                subtitle += f" · показано {len(accounts)}"
+                subtitle += t(f" · показано {len(accounts)}")
         else:
-            subtitle = "Нет добавленных аккаунтов"
+            subtitle = t("Нет добавленных аккаунтов")
         self.header.set_subtitle(subtitle)
         self.btn_upload.setEnabled(bool(total))
         self._update_actions()
@@ -182,8 +183,8 @@ class AccountsPage(QWidget):
         if not rows:
             return
         current = self.table.item(rows[0], COL_TAG).text() if len(rows) == 1 else ""
-        tag, ok = get_text(self, "Изменить тег",
-                           f"Новый тег для выбранных ({len(rows)}).\n{self._existing_tags_hint()}", current)
+        tag, ok = get_text(self, t("Изменить тег"),
+                           t(f"Новый тег для выбранных ({len(rows)}).\n{self._existing_tags_hint()}"), current)
         tag = tag.strip()
         if ok and tag:
             self.db.update_account_tags([self._row_info(r)[0] for r in rows], tag)
@@ -195,7 +196,7 @@ class AccountsPage(QWidget):
             return
         names = [self._row_info(r)[1] for r in rows]
         text = f"Удалить аккаунт «{names[0]}»?" if len(rows) == 1 else f"Удалить выбранные аккаунты ({len(rows)})?"
-        if not show_question(self, "Удаление", text + "\nСохранённые куки тоже будут удалены."):
+        if not show_question(self, t("Удаление"), text + t("\nСохранённые куки тоже будут удалены.")):
             return
         self.db.delete_accounts([self._row_info(r)[0] for r in rows])
         for name in names:
@@ -258,8 +259,8 @@ class AccountsPage(QWidget):
             parts.append(f"обновлено {summary.updated}")
         if summary.invalid_lines:
             parts.append(f"пропущено строк: {len(summary.invalid_lines)}")
-        show_info(self, "Импорт завершён",
-                  f"Аккаунты в теге «{dialog.tag}»: " + ", ".join(parts or ["ничего не изменилось"]) + ".")
+        show_info(self, t("Импорт завершён"),
+                  t(f"Аккаунты в теге «{dialog.tag}»: ") + ", ".join(parts or [t("ничего не изменилось")]) + ".")
 
     def _write_cookie(self, username, session_id, dc_id):
         cookies_dir = PROJECT_DIR / "CookiesDir"
@@ -278,7 +279,7 @@ class AccountsPage(QWidget):
         self.db.save_account(username, f"tiktok_session-{username}.cookie", tag=tag)
         if not quiet:
             self._changed()
-            show_info(self, "Готово", f"Аккаунт «{username}» добавлен с тегом «{tag}».")
+            show_info(self, t("Готово"), t(f"Аккаунт «{username}» добавлен с тегом «{tag}»."))
 
     def _login_account(self, username, tag):
         dialog = LoginDialog(self, username)
@@ -291,11 +292,11 @@ class AccountsPage(QWidget):
         elif dialog.error:
             message = dialog.error
             if "закрыт" in message.lower() or "closed" in message.lower():
-                show_warning(self, "Вход отменён", "Браузер был закрыт до завершения входа.")
+                show_warning(self, t("Вход отменён"), t("Браузер был закрыт до завершения входа."))
             else:
-                show_error(self, "Ошибка входа", message)
+                show_error(self, t("Ошибка входа"), message)
         elif dialog.cancelled_by_user:
-            show_info(self, "Вход отменён", f"Аккаунт «{username}» не добавлен.")
+            show_info(self, t("Вход отменён"), t(f"Аккаунт «{username}» не добавлен."))
 
     def _changed(self):
         self.refresh()

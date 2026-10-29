@@ -1,12 +1,13 @@
 from PyQt6.QtWidgets import (QDialog, QVBoxLayout, QHBoxLayout, QLineEdit, QComboBox, QWidget)
 from src.ui.components.common import make_button, make_label
 from src.ui.dialogs.styled_dialogs import show_warning
+from src.ui.i18n import t
 
 
 class AddAccountDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setWindowTitle("Добавить аккаунт")
+        self.setWindowTitle(t("Добавить аккаунт"))
         self.setMinimumWidth(460)
 
         self.mode = "login"
@@ -19,15 +20,15 @@ class AddAccountDialog(QDialog):
         layout.setContentsMargins(28, 24, 28, 24)
         layout.setSpacing(6)
 
-        title = make_label("Новый аккаунт")
+        title = make_label(t("Новый аккаунт"))
         title.setObjectName("pageTitle")
         layout.addWidget(title)
         layout.addSpacing(12)
 
-        layout.addWidget(make_label("Способ входа", "caption"))
+        layout.addWidget(make_label(t("Способ входа"), "caption"))
         self.mode_combo = QComboBox()
-        self.mode_combo.addItem("Через браузер", "login")
-        self.mode_combo.addItem("По кукам (sessionid)", "cookies")
+        self.mode_combo.addItem(t("Через браузер"), "login")
+        self.mode_combo.addItem(t("По кукам (sessionid)"), "cookies")
         self.mode_combo.currentIndexChanged.connect(self._on_mode)
         layout.addWidget(self.mode_combo)
 
@@ -36,15 +37,15 @@ class AddAccountDialog(QDialog):
         layout.addWidget(self.hint)
         layout.addSpacing(8)
 
-        layout.addWidget(make_label("Имя (только для списка)", "caption"))
+        layout.addWidget(make_label(t("Имя (только для списка)"), "caption"))
         self.username_input = QLineEdit()
-        self.username_input.setPlaceholderText("например, main")
+        self.username_input.setPlaceholderText(t("например, main"))
         layout.addWidget(self.username_input)
         layout.addSpacing(8)
 
-        layout.addWidget(make_label("Тег", "caption"))
+        layout.addWidget(make_label(t("Тег"), "caption"))
         self.tag_input = QLineEdit()
-        self.tag_input.setPlaceholderText("группа для загрузки")
+        self.tag_input.setPlaceholderText(t("группа для загрузки"))
         layout.addWidget(self.tag_input)
 
         self.cookie_box = QWidget()
@@ -57,7 +58,7 @@ class AddAccountDialog(QDialog):
         cookie_layout.addSpacing(8)
         cookie_layout.addWidget(make_label("tt-target-idc", "caption"))
         self.dc_input = QLineEdit()
-        self.dc_input.setPlaceholderText("например, useast8")
+        self.dc_input.setPlaceholderText(t("например, useast8"))
         cookie_layout.addWidget(self.dc_input)
         layout.addWidget(self.cookie_box)
 
@@ -65,9 +66,9 @@ class AddAccountDialog(QDialog):
         buttons = QHBoxLayout()
         buttons.setSpacing(8)
         buttons.addStretch()
-        cancel = make_button("Отмена")
+        cancel = make_button(t("Отмена"))
         cancel.clicked.connect(self.reject)
-        self.ok = make_button("Продолжить", "primary")
+        self.ok = make_button(t("Продолжить"), "primary")
         self.ok.clicked.connect(self.accept_action)
         self.ok.setDefault(True)
         buttons.addWidget(cancel)
@@ -81,24 +82,24 @@ class AddAccountDialog(QDialog):
         is_cookies = self.mode == "cookies"
         self.cookie_box.setVisible(is_cookies)
         self.hint.setText(
-            "Значения берутся из DevTools браузера: Application, Cookies, tiktok.com."
+            t("Значения берутся из DevTools браузера: Application, Cookies, tiktok.com.")
             if is_cookies else
-            "Откроется браузер. Войдите в TikTok, окно закроется само после входа."
+            t("Откроется браузер. Войдите в TikTok, окно закроется само после входа.")
         )
-        self.ok.setText("Добавить" if is_cookies else "Открыть браузер")
+        self.ok.setText(t("Добавить") if is_cookies else t("Открыть браузер"))
         self.adjustSize()
 
     def accept_action(self):
         username = self.username_input.text().strip()
         tag = self.tag_input.text().strip()
         if not username or not tag:
-            show_warning(self, "Не хватает данных", "Заполните имя и тег.")
+            show_warning(self, t("Не хватает данных"), t("Заполните имя и тег."))
             return
         if self.mode == "cookies":
             sessionid = self.sessionid_input.text().strip()
             dc_id = self.dc_input.text().strip()
             if not sessionid or not dc_id:
-                show_warning(self, "Не хватает данных", "Укажите sessionid и tt-target-idc.")
+                show_warning(self, t("Не хватает данных"), t("Укажите sessionid и tt-target-idc."))
                 return
             self.sessionid, self.dc_id = sessionid, dc_id
         self.username, self.tag = username, tag

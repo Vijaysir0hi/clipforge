@@ -1,5 +1,6 @@
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QFrame
 from PyQt6.QtCore import Qt
+from src.ui.i18n import t
 
 
 def repolish(widget):
@@ -13,7 +14,7 @@ def set_role(label: QLabel, role: str):
 
 
 def make_button(text: str, variant: str = "") -> QPushButton:
-    btn = QPushButton(text)
+    btn = QPushButton(t(text))
     btn.setCursor(Qt.CursorShape.PointingHandCursor)
     if variant:
         btn.setProperty("variant", variant)
@@ -21,7 +22,7 @@ def make_button(text: str, variant: str = "") -> QPushButton:
 
 
 def make_label(text: str, role: str = "") -> QLabel:
-    label = QLabel(text)
+    label = QLabel(t(text))
     if role:
         label.setProperty("role", role)
     return label
@@ -35,7 +36,7 @@ def make_divider() -> QFrame:
 
 
 def make_section(text: str) -> QLabel:
-    return make_label(text, "section")
+    return make_label(t(text), "section")
 
 
 def make_card(name: str = "panel") -> QFrame:
@@ -53,18 +54,18 @@ class PageHeader(QWidget):
 
         self.eyebrow = None
         if eyebrow:
-            self.eyebrow = make_label(eyebrow, "eyebrow")
+            self.eyebrow = make_label(t(eyebrow), "eyebrow")
             layout.addWidget(self.eyebrow)
 
-        self.title = QLabel(title)
+        self.title = QLabel(t(title))
         self.title.setObjectName("pageTitle")
-        self.subtitle = make_label(subtitle, "muted")
+        self.subtitle = make_label(t(subtitle), "muted")
 
         layout.addWidget(self.title)
         layout.addWidget(self.subtitle)
 
     def set_subtitle(self, text: str):
-        self.subtitle.setText(text)
+        self.subtitle.setText(t(text))
 
 
 def plural(n: int, one: str, few: str, many: str) -> str:

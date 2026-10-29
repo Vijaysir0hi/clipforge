@@ -16,6 +16,7 @@ from src.core.account_import import parse_accounts
 from src.core.database import Database
 from src.core.paths import app_dir
 from src.core.video_randomizer import resolve_ffmpeg
+from src.ui.i18n import t
 
 VIDEO_EXTENSIONS = (".mp4", ".mov", ".m4v", ".webm")
 MAX_VIDEO_BYTES = 4 * 1024 ** 3

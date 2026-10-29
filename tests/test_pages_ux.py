@@ -1,6 +1,7 @@
 import os
 import sys
 import tempfile
+from src.ui.i18n import t
 
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -30,8 +31,8 @@ def test_accounts_page_uses_shared_service_and_has_clear_empty_state(qapp):
         service = ClipForgeService(Database(os.path.join(tmp, "pages.db")))
         page = AccountsPage(service)
         assert page.db is service.db
-        assert page.header.subtitle.text() == "Нет добавленных аккаунтов"
-        assert page.empty_title.text() == "Аккаунтов пока нет"
+        assert page.header.subtitle.text() == t("Нет добавленных аккаунтов")
+        assert page.empty_title.text() == t("Аккаунтов пока нет")
         assert not page.btn_upload.isEnabled()
 
 
@@ -42,7 +43,7 @@ def test_stats_page_uses_shared_database_and_empty_state(qapp):
         assert page.db is service.db
         assert page.stack.currentIndex() == 1
         assert page.table.rowCount() == 0
-        assert page.header.subtitle.text() == "Ещё не обновлялось"
+        assert page.header.subtitle.text() == t("Ещё не обновлялось")
 
 
 def test_settings_page_uses_shared_database_and_clipforge_copy(qapp):

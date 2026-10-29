@@ -1,6 +1,7 @@
 """ClipForge visual system: warm paper palette, editorial typography, light surfaces."""
 
 from pathlib import Path
+from src.ui.i18n import t
 
 BG = "#f4f3ef"
 SURFACE = "#ffffff"

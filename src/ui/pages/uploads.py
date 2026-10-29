@@ -1,4 +1,4 @@
-﻿import contextlib
+import contextlib
 import os
 import sys
 import time
@@ -28,6 +28,8 @@ from src.ui.components.common import (
 )
 from src.ui.dialogs.styled_dialogs import show_warning
 from src.ui.dialogs.upload_history import UploadHistoryDialog
+from src.ui.i18n import plural as i18n_plural
+from src.ui.i18n import t
 
 CAPTION_LIMIT = 2200
 PROJECT_DIR = app_dir()
@@ -178,8 +180,8 @@ class UploadsPage(QWidget):
         root.setContentsMargins(48, 40, 48, 36)
         root.setSpacing(0)
 
-        self.header = PageHeader("Новая публикация", "Подготовьте видео и отправьте его аккаунтам группы",
-                                 eyebrow="ПУБЛИКАЦИЯ")
+        self.header = PageHeader(t("Новая публикация"), t("Подготовьте видео и отправьте его аккаунтам группы"),
+                                 eyebrow=t("ПУБЛИКАЦИЯ"))
         root.addWidget(self.header)
         root.addSpacing(26)
 
@@ -190,14 +192,14 @@ class UploadsPage(QWidget):
         form = QVBoxLayout(form_card)
         form.setContentsMargins(24, 20, 24, 22)
         form.setSpacing(6)
-        form.addWidget(make_section("ПАРАМЕТРЫ"))
+        form.addWidget(make_section(t("ПАРАМЕТРЫ")))
         form.addSpacing(14)
 
-        form.addWidget(make_label("1 · Видео для публикации", "caption"))
+        form.addWidget(make_label(t("1 · Видео для публикации"), "caption"))
         video_row = QHBoxLayout()
         video_row.setSpacing(12)
-        self.video_label = make_label("Файл не выбран · перетащите видео в окно", "muted")
-        self.btn_video = make_button("Выбрать файл")
+        self.video_label = make_label(t("Файл не выбран · перетащите видео в окно"), "muted")
+        self.btn_video = make_button(t("Выбрать файл"))
         self.btn_video.clicked.connect(self._select_video)
         video_row.addWidget(self.video_label, 1)
         video_row.addWidget(self.btn_video)
@@ -205,19 +207,19 @@ class UploadsPage(QWidget):
         form.addSpacing(18)
 
         caption_head = QHBoxLayout()
-        caption_head.addWidget(make_label("2 · Подпись и хэштеги", "caption"))
+        caption_head.addWidget(make_label(t("2 · Подпись и хэштеги"), "caption"))
         caption_head.addStretch()
         self.counter = make_label(f"0 / {CAPTION_LIMIT}", "caption")
         caption_head.addWidget(self.counter)
         form.addLayout(caption_head)
         self.caption = QPlainTextEdit()
         self.caption.setFixedHeight(110)
-        self.caption.setPlaceholderText("Текст под видео. Хэштеги пишите прямо здесь.")
+        self.caption.setPlaceholderText(t("Текст под видео. Хэштеги пишите прямо здесь."))
         self.caption.textChanged.connect(self._on_caption)
         form.addWidget(self.caption)
         form.addSpacing(18)
 
-        form.addWidget(make_label("3 · Группа аккаунтов", "caption"))
+        form.addWidget(make_label(t("3 · Группа аккаунтов"), "caption"))
         self.group = QComboBox()
         self.group.currentIndexChanged.connect(self._update_state)
         form.addWidget(self.group)
@@ -225,21 +227,21 @@ class UploadsPage(QWidget):
 
         variant_row = QHBoxLayout()
         variant_row.setSpacing(10)
-        self.chk_variants = QCheckBox("Разные версии для каждого аккаунта")
+        self.chk_variants = QCheckBox(t("Разные версии для каждого аккаунта"))
         self.chk_variants.setChecked(bool(self.db.get("randomize_variants", False)))
         self.chk_variants.toggled.connect(self._on_variants_toggled)
         variant_row.addWidget(self.chk_variants)
         variant_row.addStretch()
         self.variant_intensity = QComboBox()
-        for label, code in (("Лёгкая", "light"), ("Средняя", "medium"),
-                            ("Сильная", "strong"), ("Случайная", "random")):
+        for label, code in ((t("Лёгкая"), "light"), (t("Средняя"), "medium"),
+                            (t("Сильная"), "strong"), (t("Случайная"), "random")):
             self.variant_intensity.addItem(label, code)
         saved_intensity = str(self.db.get("randomize_intensity", "medium") or "medium")
         self.variant_intensity.setCurrentIndex(max(0, self.variant_intensity.findData(saved_intensity)))
         self.variant_intensity.currentIndexChanged.connect(self._on_intensity_changed)
         variant_row.addWidget(self.variant_intensity)
         form.addLayout(variant_row)
-        hint = make_label("FFmpeg меняет контраст, яркость, шум и сжатие у копии для каждого аккаунта.", "caption")
+        hint = make_label(t("FFmpeg меняет контраст, яркость, шум и сжатие у копии для каждого аккаунта."), "caption")
         hint.setWordWrap(True)
         form.addWidget(hint)
         form.addSpacing(20)
@@ -247,12 +249,12 @@ class UploadsPage(QWidget):
         actions = QHBoxLayout()
         actions.setContentsMargins(0, 0, 0, 0)
         actions.setSpacing(8)
-        self.btn_start = make_button("Опубликовать", "primary")
+        self.btn_start = make_button(t("Опубликовать"), "primary")
         self.btn_start.clicked.connect(lambda: self._start())
-        self.btn_stop = make_button("Остановить")
+        self.btn_stop = make_button(t("Остановить"))
         self.btn_stop.clicked.connect(self._stop)
         self.btn_stop.setVisible(False)
-        self.btn_retry = make_button("Повторить ошибки")
+        self.btn_retry = make_button(t("Повторить ошибки"))
         self.btn_retry.clicked.connect(self._retry_failed)
         self.btn_retry.setVisible(False)
         actions.addWidget(self.btn_start)
@@ -278,12 +280,12 @@ class UploadsPage(QWidget):
         log_layout.setSpacing(0)
         log_head = QHBoxLayout()
         log_head.setSpacing(8)
-        log_head.addWidget(make_section("ЖУРНАЛ"))
+        log_head.addWidget(make_section(t("ЖУРНАЛ")))
         log_head.addStretch()
-        self.btn_history = make_button("История")
+        self.btn_history = make_button(t("История"))
         self.btn_history.clicked.connect(self._show_history)
         log_head.addWidget(self.btn_history)
-        self.btn_copy_log = make_button("Копировать")
+        self.btn_copy_log = make_button(t("Копировать"))
         self.btn_copy_log.clicked.connect(self._copy_log)
         log_head.addWidget(self.btn_copy_log)
         log_layout.addLayout(log_head)
@@ -291,7 +293,7 @@ class UploadsPage(QWidget):
         self.log = QPlainTextEdit()
         self.log.setObjectName("log")
         self.log.setReadOnly(True)
-        self.log.setPlaceholderText("Здесь появится ход загрузки и причины ошибок.")
+        self.log.setPlaceholderText(t("Здесь появится ход загрузки и причины ошибок."))
         log_layout.addWidget(self.log, 1)
         columns.addWidget(log_card, 2)
 
@@ -305,7 +307,7 @@ class UploadsPage(QWidget):
             "SELECT tag, COUNT(*) AS c FROM accounts WHERE status = 'active' AND tag IS NOT NULL "
             "GROUP BY tag ORDER BY tag")
         for row in rows:
-            self.group.addItem(f"{row[0]}   ·   {plural(row[1], 'аккаунт', 'аккаунта', 'аккаунтов')}", row[0])
+            self.group.addItem(f"{row[0]}   ·   {i18n_plural(row[1], 'account')}", row[0])
         if current is not None:
             index = self.group.findData(current)
             if index >= 0:
@@ -339,7 +341,7 @@ class UploadsPage(QWidget):
         size = validation.size
         self._last_status = None
         self.video_path = path
-        self.video_label.setText(f"{os.path.basename(path)}   ·   {size / 1024 / 1024:.1f} МБ")
+        self.video_label.setText(t(f"{os.path.basename(path)}   ·   {size / 1024 / 1024:.1f} МБ"))
         set_role(self.video_label, "")
         self.failed = []
         self.btn_retry.setVisible(False)
@@ -400,9 +402,9 @@ class UploadsPage(QWidget):
             set_role(self.status, role)
             return
         if not self.group.count():
-            self.status.setText("Сначала добавьте аккаунт")
+            self.status.setText(t("Сначала добавьте аккаунт"))
         elif not ready:
-            self.status.setText("Нужны видео, подпись и группа")
+            self.status.setText(t("Нужны видео, подпись и группа"))
         else:
             self.status.setText("")
 
@@ -423,27 +425,27 @@ class UploadsPage(QWidget):
         tag = self.group.currentData()
         targets = usernames or self._usernames(tag)
         if not targets:
-            show_warning(self, "Нет аккаунтов", f"В группе «{tag}» нет активных аккаунтов.")
+            show_warning(self, t("Нет аккаунтов"), t(f"В группе «{tag}» нет активных аккаунтов."))
             return
         if not self.video_path:
-            show_warning(self, "Нет видео", "Выберите файл видео.")
+            show_warning(self, t("Нет видео"), t("Выберите файл видео."))
             return
         validation = validate_video_file(self.video_path)
         if not validation.valid:
             self.video_path = None
-            self.video_label.setText("Файл не выбран · перетащите видео в окно")
+            self.video_label.setText(t("Файл не выбран · перетащите видео в окно"))
             set_role(self.video_label, "muted")
             self._update_state()
-            show_warning(self, "Файл недоступен", f"{validation.detail}. Выберите файл заново.")
+            show_warning(self, t("Файл недоступен"), t(f"{validation.detail}. Выберите файл заново."))
             return
 
         variant_settings = None
         if self.chk_variants.isChecked():
             if not resolve_ffmpeg():
                 show_warning(
-                    self, "Нужен FFmpeg",
-                    "Для уникализации видео нужен FFmpeg.\n"
-                    "Установите его и добавьте в PATH или положите ffmpeg.exe в папку ffmpeg\\bin рядом с программой.")
+                    self, t("Нужен FFmpeg"),
+                    t("Для уникализации видео нужен FFmpeg.\n"
+                    "Установите его и добавьте в PATH или положите ffmpeg.exe в папку ffmpeg\\bin рядом с программой."))
                 return
             variant_settings = RandomizerSettings(intensity=self.variant_intensity.currentData() or "medium")
 
@@ -454,15 +456,15 @@ class UploadsPage(QWidget):
         self.db.save_video(self.video_path, caption[:100], caption)
 
         self.log.clear()
-        self._log(f"Видео: {os.path.basename(self.video_path)}")
+        self._log(t(f"Видео: {os.path.basename(self.video_path)}"))
         proxy = os.environ.get("TIKTOK_PROXY")
-        self._log(f"Соединение: {proxy if proxy else 'напрямую или VPN'}")
+        self._log(t(f"Соединение: {proxy if proxy else 'напрямую или VPN'}"))
         delay = int(self.db.get("upload_delay", 0) or 0)
         if delay:
-            self._log(f"Пауза между аккаунтами: {delay} с")
+            self._log(t(f"Пауза между аккаунтами: {delay} с"))
         if variant_settings is not None:
-            self._log(f"Уникализация: включена ({self.variant_intensity.currentText().lower()})")
-        self._log(f"Аккаунтов в очереди: {len(targets)}")
+            self._log(t(f"Уникализация: включена ({self.variant_intensity.currentText().lower()})"))
+        self._log(t(f"Аккаунтов в очереди: {len(targets)}"))
         self._log("")
 
         self.thread = UploadThread(self.video_path, caption, targets, delay, variant_settings=variant_settings)
@@ -475,7 +477,7 @@ class UploadsPage(QWidget):
         self.progress.setVisible(True)
         self.btn_stop.setVisible(True)
         self.btn_stop.setEnabled(True)
-        self.status.setText(f"Загрузка идёт: 0 из {len(targets)}")
+        self.status.setText(t(f"Загрузка идёт: 0 из {len(targets)}"))
         set_role(self.status, "muted")
         self.thread.start()
         self._update_state()
@@ -492,7 +494,7 @@ class UploadsPage(QWidget):
         if self.thread:
             self.thread.stop_requested = True
             self.btn_stop.setEnabled(False)
-            self.status.setText("Остановится после текущего аккаунта")
+            self.status.setText(t("Остановится после текущего аккаунта"))
             set_role(self.status, "muted")
 
     def _account_done(self, username, ok, error):
@@ -512,7 +514,7 @@ class UploadsPage(QWidget):
         if not ok:
             self.failed.append(username)
         self.progress.setValue(self.progress.value() + 1)
-        self.status.setText(f"Загрузка идёт: {self.progress.value()} из {self.progress.maximum()}")
+        self.status.setText(t(f"Загрузка идёт: {self.progress.value()} из {self.progress.maximum()}"))
         self.accounts_changed.emit()
 
     def _finished(self, done, total, stopped=False):
@@ -523,11 +525,11 @@ class UploadsPage(QWidget):
                 if username not in self.failed:
                     self.failed.append(username)
         self._log("")
-        self._log(f"Готово: опубликовано {done} из {total}")
+        self._log(t(f"Готово: опубликовано {done} из {total}"))
         if stopped:
-            self._log("Остановлено пользователем; непройденные аккаунты можно повторить")
+            self._log(t("Остановлено пользователем; непройденные аккаунты можно повторить"))
         if self.failed:
-            self._log(f"Не удалось: {', '.join('@' + name for name in self.failed)}")
+            self._log(t(f"Не удалось: {', '.join('@' + name for name in self.failed)}"))
         self._last_status = (f"Опубликовано {done} из {total}",
                              "ok" if done == total and total else "muted" if done else "err")
         self._update_state()
@@ -540,7 +542,7 @@ class UploadsPage(QWidget):
             thread.deleteLater()
         if not self.failed:
             self.video_path = None
-            self.video_label.setText("Файл не выбран · перетащите видео в окно")
+            self.video_label.setText(t("Файл не выбран · перетащите видео в окно"))
             set_role(self.video_label, "muted")
             self.caption.clear()
             self.last_job = None

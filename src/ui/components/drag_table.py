@@ -1,4 +1,5 @@
 from PyQt6.QtWidgets import QTableWidget
+from src.ui.i18n import t
 
 
 class DragSelectTableBase(QTableWidget):

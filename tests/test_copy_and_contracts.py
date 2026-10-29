@@ -1,5 +1,6 @@
 import sys
 from pathlib import Path
+from src.ui.i18n import t
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
@@ -17,8 +18,8 @@ def test_clipforge_brand_contract_is_stable():
 def test_message_formats_product_copy():
     from src.ui.copy import message
 
-    assert message("missing_video") == "Выберите видеофайл для публикации."
-    assert message("group_empty", tag="Тест") == "В группе «Тест» нет активных аккаунтов."
+    assert message("missing_video") == t("Выберите видеофайл для публикации.")
+    assert message("group_empty", tag="Тест") == t("В группе «{tag}» нет активных аккаунтов.", tag="Тест")
 
 
 def test_application_contracts_are_typed_data():

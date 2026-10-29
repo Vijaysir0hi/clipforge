@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from typing import Optional
+from src.ui.i18n import t
 
 
 @dataclass(frozen=True)

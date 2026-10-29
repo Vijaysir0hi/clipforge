@@ -14,6 +14,7 @@ from pathlib import Path
 
 from src.app.contracts import RandomizerSettings, VideoVariant
 from src.core.paths import app_dir
+from src.ui.i18n import t
 
 INTENSITIES = ("light", "medium", "strong", "random")
 NOISE_LEVELS = (5, 10, 15, 20, 25, 30)
