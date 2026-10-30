@@ -56,6 +56,10 @@ class MainWindow(QMainWindow):
         self.settings_page = SettingsPage(self.service)
 
         self.settings_page.proxy_changed.connect(self.topbar.set_connection)
+        self.settings_page.data_seeded.connect(self.overview_page.refresh)
+        self.settings_page.data_seeded.connect(self.accounts_page.refresh)
+        self.settings_page.data_seeded.connect(self.stats_page.refresh)
+        self.settings_page.data_seeded.connect(self.uploads_page.refresh)
         self.overview_page.go_upload.connect(lambda: self.show_page(self.UPLOADS))
         self.accounts_page.go_upload.connect(lambda: self.show_page(self.UPLOADS))
         self.accounts_page.accounts_changed.connect(self.uploads_page.refresh)

@@ -31,6 +31,8 @@ Everything is local: the database, cookies and settings live next to the app.
 
 ## Screenshots
 
+<img src="docs/demo.gif" alt="ClipForge demo" width="880">
+
 <table>
 <tr>
 <td width="50%"><img src="docs/screenshots/uploads.png" alt="Publishing"><br><sub><b>Publishing</b> — steps, group, randomization</sub></td>

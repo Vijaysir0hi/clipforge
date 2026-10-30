@@ -31,6 +31,8 @@
 
 ## Скриншоты
 
+<img src="docs/demo.gif" alt="Демо ClipForge" width="880">
+
 <table>
 <tr>
 <td width="50%"><img src="docs/screenshots/uploads.png" alt="Публикация"><br><sub><b>Публикация</b> — шаги, группа, уникализация</sub></td>

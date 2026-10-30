@@ -8,6 +8,7 @@ from PyQt6.QtGui import QDesktopServices
 
 from src.app.services import ClipForgeService
 from src.core.paths import app_dir
+from src.core.demo import load_demo
 from src.core.video_randomizer import resolve_ffmpeg
 from src.ui.components.common import (
     PageHeader,
@@ -19,6 +20,7 @@ from src.ui.components.common import (
     set_role,
 )
 from src.ui.copy import PRODUCT_NAME, PRODUCT_VERSION
+from src.ui.dialogs.styled_dialogs import show_info, show_question
 from src.ui.i18n import t
 
 ENV_PATH = app_dir() / ".env"
@@ -112,6 +114,7 @@ class DiagnosticsThread(QThread):
 
 class SettingsPage(QWidget):
     proxy_changed = pyqtSignal(str)
+    data_seeded = pyqtSignal()
 
     def __init__(self, service=None, parent=None):
         super().__init__(parent)
@@ -192,6 +195,9 @@ class SettingsPage(QWidget):
         self.btn_diag.clicked.connect(self._diagnostics)
         service.addWidget(self.btn_data)
         service.addWidget(self.btn_diag)
+        self.btn_demo = make_button(t("Демо-данные"))
+        self.btn_demo.clicked.connect(self._load_demo)
+        service.addWidget(self.btn_demo)
         service.addStretch()
         column.addLayout(service)
         self.diag = make_label("", "caption")
@@ -261,6 +267,14 @@ class SettingsPage(QWidget):
     def _checked(self, ok, text):
         self.btn_check.setEnabled(True)
         self._show(text, "ok" if ok else "err")
+
+    def _load_demo(self):
+        if not show_question(self, t("Демо-данные"),
+                             t("Добавить демонстрационные аккаунты, историю и статистику?")):
+            return
+        count = load_demo(self.db)
+        self.data_seeded.emit()
+        show_info(self, t("Готово"), t("Демо-данные добавлены. Откройте «Обзор» и «Статистика»."))
 
     def _open_data_dir(self):
         QDesktopServices.openUrl(QUrl.fromLocalFile(str(app_dir())))

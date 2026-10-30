@@ -226,6 +226,9 @@ _EN = {
         "Local app: the database, cookies and settings live next to the executable.",
     "Данные: ": "Data: ",
     "Сохранено": "Saved",
+    "Демо-данные": "Demo data",
+    "Добавить демонстрационные аккаунты, историю и статистику?": "Add demo accounts, publication history and statistics?",
+    "Демо-данные добавлены. Откройте «Обзор» и «Статистика».": "Demo data added. Open Overview and Statistics.",
     "Проверяю...": "Checking...",
     "Проверяю окружение...": "Checking the environment...",
     "Node.js: НЕ НАЙДЕН — без него не работают публикация и статистика":
