@@ -9,6 +9,7 @@ import random
 import re
 import shutil
 import subprocess
+import time
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -110,7 +111,8 @@ def variant_filename(source: str, index: int, account: str) -> str:
 
 def randomize_video(source: str, destination: str, settings: RandomizerSettings | None = None,
                     rng: random.Random | None = None, runner=None,
-                    ffmpeg: str | None = None) -> VideoVariant:
+                    ffmpeg: str | None = None,
+                    stop_requested=None) -> VideoVariant:
     settings = settings or RandomizerSettings()
     source_path = Path(source)
     if not source_path.is_file():
@@ -126,9 +128,19 @@ def randomize_video(source: str, destination: str, settings: RandomizerSettings 
 
     runner = runner or _run
     try:
-        result = runner(command)
+        try:
+            result = runner(command, stop_requested=stop_requested)
+        except TypeError:
+            result = runner(command)
     except OSError as error:
         raise RandomizerError(f"FFmpeg не запускается: {error}") from error
+    except subprocess.TimeoutExpired as error:
+        raise RandomizerError(f"FFmpeg превысил таймаут ({DEFAULT_TIMEOUT} с)") from error
+    except RandomizerError:
+        if destination_path.exists():
+            destination_path.unlink(missing_ok=True)
+        raise
+
     if getattr(result, "returncode", 0) != 0:
         detail = _last_error(getattr(result, "stderr", "")) or f"код {result.returncode}"
         raise RandomizerError(f"FFmpeg не смог обработать видео: {detail}")
@@ -147,11 +159,38 @@ def randomize_video(source: str, destination: str, settings: RandomizerSettings 
     )
 
 
-def _run(command):
-    return subprocess.run(
-        command, capture_output=True, text=True, timeout=DEFAULT_TIMEOUT,
+def _run(command, stop_requested=None, timeout=DEFAULT_TIMEOUT):
+    proc = subprocess.Popen(
+        command,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
         creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
     )
+    poll_interval = 0.1
+    elapsed = 0.0
+    while True:
+        if stop_requested and (stop_requested() if callable(stop_requested) else stop_requested):
+            proc.terminate()
+            try:
+                proc.wait(timeout=2.0)
+            except subprocess.TimeoutExpired:
+                proc.kill()
+                proc.wait(timeout=2.0)
+            stdout, stderr = proc.communicate()
+            raise RandomizerError("Уникализация остановлена пользователем")
+
+        ret = proc.poll()
+        if ret is not None:
+            stdout, stderr = proc.communicate()
+            return subprocess.CompletedProcess(command, ret, stdout, stderr)
+
+        time.sleep(poll_interval)
+        elapsed += poll_interval
+        if timeout is not None and elapsed >= timeout:
+            proc.kill()
+            stdout, stderr = proc.communicate()
+            raise subprocess.TimeoutExpired(command, timeout, output=stdout, stderr=stderr)
 
 
 def _last_error(stderr) -> str:

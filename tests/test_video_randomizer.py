@@ -1,4 +1,6 @@
 import random
+import subprocess
+import sys
 from pathlib import Path
 
 import pytest
@@ -8,6 +10,7 @@ from src.core.video_randomizer import (
     CRF_RANGE,
     NOISE_LEVELS,
     RandomizerError,
+    _run,
     build_command,
     build_filter,
     pick_params,
@@ -131,3 +134,33 @@ def test_resolve_ffmpeg_finds_binary_on_this_machine():
     if binary is None:
         pytest.skip("FFmpeg не установлен")
     assert Path(binary).exists()
+
+
+def test_randomize_video_stops_and_cleans_destination_when_requested(tmp_path):
+    source = tmp_path / "in.mp4"
+    source.write_bytes(b"0123456789")
+    dest = tmp_path / "out.mp4"
+
+    def runner(command, stop_requested=None):
+        dest.write_bytes(b"partial-data")
+        raise RandomizerError("Уникализация остановлена пользователем")
+
+    with pytest.raises(RandomizerError) as error:
+        randomize_video(str(source), str(dest), runner=runner, ffmpeg="ffmpeg", stop_requested=lambda: True)
+
+    assert "остановлена пользователем" in str(error.value)
+    assert not dest.exists(), "частично созданный файл должен быть удалён при отмене"
+
+
+def test_run_terminates_process_when_stop_requested():
+    cmd = [sys.executable, "-c", "import time; time.sleep(10)"]
+    with pytest.raises(RandomizerError) as error:
+        _run(cmd, stop_requested=lambda: True, timeout=5)
+    assert "остановлена пользователем" in str(error.value)
+
+
+def test_run_enforces_timeout():
+    cmd = [sys.executable, "-c", "import time; time.sleep(10)"]
+    with pytest.raises(subprocess.TimeoutExpired):
+        _run(cmd, stop_requested=lambda: False, timeout=0.2)
+

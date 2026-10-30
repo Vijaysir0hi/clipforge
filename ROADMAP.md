@@ -6,7 +6,7 @@ Vote or open an issue if you want to work on something from the list.
 ## Now — reliability of the current product
 
   [ ] **Delete a video variant right after its upload.** Today all variants live until the run ends, so a 4 GB clip × 20 accounts can fill the disk. Add a free space guard before the run.
-  [ ] **Cancel FFmpeg on “Stop”.** `subprocess.run` is blocking; switch to `Popen` with polling so the button reacts during encoding.
+  [x] **Cancel FFmpeg on “Stop”.** `subprocess.run` is blocking; switch to `Popen` with polling so the button reacts during encoding.
   [ ] **Clean stale `data/variants` on startup** after a crash.
   [ ] **Keep only the last N migration backups** instead of accumulating `.bak` files.
   [ ] **Record variant parameters in the publication history** (contrast, brightness, noise, CRF or a file hash) to know exactly what was uploaded to a restricted account.

@@ -312,6 +312,7 @@ _EN = {
     "код ": "code ",
     "FFmpeg не смог обработать видео: ": "FFmpeg failed to process the video: ",
     "FFmpeg не запускается: ": "FFmpeg does not start: ",
+    "Уникализация остановлена пользователем": "Randomization stopped by user",
     # misc
     "Выберите видеофайл для публикации.": "Choose a video file to publish.",
     "В группе «{tag}» нет активных аккаунтов.": "Group “{tag}” has no active accounts.",

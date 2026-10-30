@@ -105,6 +105,7 @@ class UploadThread(QThread):
                             self.video_path,
                             str(variant_dir / variant_filename(self.video_path, index, username)),
                             self.variant_settings,
+                            stop_requested=lambda: self.stop_requested,
                         )
                         target = variant.path
                         self.line.emit(
@@ -113,6 +114,9 @@ class UploadThread(QThread):
                         )
                     except RandomizerError as e:
                         error = str(e) or type(e).__name__
+                        if self.stop_requested:
+                            self.line.emit("    Уникализация остановлена пользователем")
+                            break
                         self.line.emit(f"    Ошибка уникализации: {error}")
                         self.account_result.emit(username, False, error)
                         if index < total and self.delay and not self.stop_requested:
